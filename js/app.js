@@ -1,59 +1,95 @@
-/**
- * Main application module for Legal Pages Constructor
- * Initializes all modules and handles app lifecycle
- */
-
 const App = {
-    /**
-     * Initialize application
-     */
     init() {
-        console.log('Legal Pages Constructor initializing...');
-        
-        // Initialize UI
         UI.init();
-        
-        // Initialize Editor
         Editor.init();
-        
-        // Check if settings exist
-        this.checkFirstRun();
-        
-        // Load initial document
-        UI.loadCurrentDocument();
-        
-        console.log('Legal Pages Constructor initialized successfully');
+        this.bindEvents();
+        this.checkFirstVisit();
     },
-    
-    /**
-     * Check if this is first run and show settings modal
-     */
-    checkFirstRun() {
+
+    bindEvents() {
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            UI.modal.show('settingsModal');
+            this.populateSettingsForm();
+        });
+
+        document.getElementById('settingsSave').addEventListener('click', () => {
+            this.saveSettings();
+        });
+
+        document.getElementById('settingsClose').addEventListener('click', () => {
+            UI.modal.hide('settingsModal');
+        });
+
+        document.getElementById('donateBtn').addEventListener('click', () => {
+            UI.modal.show('donateModal');
+        });
+
+        document.getElementById('donateClose').addEventListener('click', () => {
+            UI.modal.hide('donateModal');
+        });
+
+        document.getElementById('donateCloseBtn').addEventListener('click', () => {
+            UI.modal.hide('donateModal');
+        });
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            this.copyHtml();
+        });
+
+        document.getElementById('helpBtn').addEventListener('click', () => {
+            UI.toast.show('Справка: Редактируйте текст документов и нажмите "Копировать HTML" для вставки в OpenCart');
+        });
+    },
+
+    checkFirstVisit() {
         const settings = Storage.getSettings();
         if (!settings.full_name) {
-            // Show settings modal on first run
-            setTimeout(() => {
-                UI.openSettingsModal();
-            }, 500);
+            UI.modal.show('settingsModal');
         }
     },
-    
-    /**
-     * Handle window beforeunload event
-     */
-    handleBeforeUnload(e) {
-        if (Editor.isDirty) {
-            Editor.save();
+
+    populateSettingsForm() {
+        const settings = Storage.getSettings();
+        const form = document.getElementById('settingsForm');
+        for (const key in settings) {
+            const input = form.querySelector(`input[name="${key}"]`);
+            if (input) {
+                input.value = settings[key];
+            }
+        }
+    },
+
+    saveSettings() {
+        const form = document.getElementById('settingsForm');
+        const formData = new FormData(form);
+        const settings = Object.fromEntries(formData.entries());
+        Storage.saveSettings(settings);
+        UI.modal.hide('settingsModal');
+        Editor.loadDocument(UI.tabs.currentTab);
+        UI.toast.show('Настройки сохранены');
+    },
+
+    async copyHtml() {
+        const html = Editor.getRenderedHtml();
+        try {
+            await navigator.clipboard.writeText(html);
+            UI.toast.show('HTML скопирован в буфер обмена');
+        } catch {
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = html;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                UI.toast.show('HTML скопирован в буфер обмена');
+            } catch {
+                UI.toast.show('Ошибка копирования');
+            }
         }
     }
 };
 
-// Initialize app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    App.init();
-});
-
-// Save on page unload
-window.addEventListener('beforeunload', () => {
-    App.handleBeforeUnload();
-});
+document.addEventListener('DOMContentLoaded', () => App.init());

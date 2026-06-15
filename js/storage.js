@@ -1,64 +1,112 @@
 /**
- * Storage module for Legal Pages Constructor
- * Handles local storage operations for settings and documents
+ * localStorage wrapper module for Legal Pages Constructor.
+ * @module storage
  */
-
 const Storage = {
-    SETTINGS_KEY: 'legal_pages_settings',
-    DOCUMENTS_KEY: 'legal_pages_documents',
-    
     /**
-     * Get settings from local storage
-     * @returns {Object} Settings object
+     * LocalStorage key constants.
+     * @readonly
+     * @enum {string}
+     */
+    KEYS: {
+        SETTINGS: 'legal_constructor_settings',
+        DOCUMENTS: 'legal_constructor_documents'
+    },
+
+    /**
+     * Retrieve and parse a JSON value from localStorage.
+     * @param {string} key - The localStorage key.
+     * @returns {*} Parsed value or null if missing / unparseable.
+     */
+    get(key) {
+        try {
+            return JSON.parse(localStorage.getItem(key));
+        } catch {
+            return null;
+        }
+    },
+
+    /**
+     * Serialize a value to JSON and store it in localStorage.
+     * @param {string} key - The localStorage key.
+     * @param {*} value - Any JSON-serializable value.
+     * @returns {boolean} True on success, false on failure.
+     */
+    set(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+            return true;
+        } catch {
+            return false;
+        }
+    },
+
+    /**
+     * Remove an item from localStorage.
+     * @param {string} key - The localStorage key.
+     * @returns {boolean} True on success, false on failure.
+     */
+    remove(key) {
+        try {
+            localStorage.removeItem(key);
+            return true;
+        } catch {
+            return false;
+        }
+    },
+
+    /**
+     * Get saved constructor settings.
+     * @returns {Object} Settings object or empty object if none exist.
      */
     getSettings() {
-        const settings = localStorage.getItem(this.SETTINGS_KEY);
-        return settings ? JSON.parse(settings) : {};
+        return this.get(this.KEYS.SETTINGS) || {};
     },
-    
+
     /**
-     * Save settings to local storage
-     * @param {Object} settings - Settings object to save
+     * Persist constructor settings.
+     * @param {Object} settings - Settings to save.
+     * @returns {boolean} True on success, false on failure.
      */
     saveSettings(settings) {
-        localStorage.setItem(this.SETTINGS_KEY, JSON.stringify(settings));
+        return this.set(this.KEYS.SETTINGS, settings);
     },
-    
+
     /**
-     * Get document content from local storage
-     * @param {string} docId - Document identifier
-     * @returns {string} Document content
+     * Get all saved documents.
+     * @returns {Object} Documents map or empty object if none exist.
      */
-    getDocument(docId) {
-        const documents = this.getAllDocuments();
-        return documents[docId] || '';
+    getDocuments() {
+        return this.get(this.KEYS.DOCUMENTS) || {};
     },
-    
+
     /**
-     * Save document content to local storage
-     * @param {string} docId - Document identifier
-     * @param {string} content - Document content
+     * Save a single document by id.
+     * @param {string} docId - Document identifier.
+     * @param {*} content - Document content to persist.
+     * @returns {boolean} True on success, false on failure.
      */
     saveDocument(docId, content) {
-        const documents = this.getAllDocuments();
-        documents[docId] = content;
-        localStorage.setItem(this.DOCUMENTS_KEY, JSON.stringify(documents));
+        const docs = this.getDocuments();
+        docs[docId] = content;
+        return this.set(this.KEYS.DOCUMENTS, docs);
     },
-    
+
     /**
-     * Get all documents from local storage
-     * @returns {Object} All documents
+     * Retrieve a single document by id.
+     * @param {string} docId - Document identifier.
+     * @returns {*|null} Document content or null if not found.
      */
-    getAllDocuments() {
-        const documents = localStorage.getItem(this.DOCUMENTS_KEY);
-        return documents ? JSON.parse(documents) : {};
+    getDocument(docId) {
+        const docs = this.getDocuments();
+        return docs[docId] || null;
     },
-    
+
     /**
-     * Clear all data from local storage
+     * Remove all constructor data from localStorage.
      */
-    clearAll() {
-        localStorage.removeItem(this.SETTINGS_KEY);
-        localStorage.removeItem(this.DOCUMENTS_KEY);
+    clear() {
+        this.remove(this.KEYS.SETTINGS);
+        this.remove(this.KEYS.DOCUMENTS);
     }
 };

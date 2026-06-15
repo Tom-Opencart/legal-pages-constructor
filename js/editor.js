@@ -1,123 +1,85 @@
-/**
- * Editor module for Legal Pages Constructor
- * Handles rich text editing functionality
- */
-
 const Editor = {
-    editor: null,
-    isDirty: false,
-    
-    /**
-     * Initialize editor
-     */
+    element: null,
+    currentDoc: null,
+
     init() {
-        this.editor = document.getElementById('editor');
-        this.setupEventListeners();
+        this.element = document.getElementById('editor');
+        this.loadDocument('offer');
+        this.element.addEventListener('input', () => this.autoSave());
+        this.element.addEventListener('keydown', (e) => this.handleKeyboard(e));
     },
-    
-    /**
-     * Setup event listeners for editor
-     */
-    setupEventListeners() {
-        // Input event for auto-save
-        this.editor.addEventListener('input', () => {
-            this.isDirty = true;
-            this.autoSave();
-        });
-        
-        // Keyboard shortcuts
-        this.editor.addEventListener('keydown', (e) => {
-            // Ctrl+S to save
-            if (e.ctrlKey && e.key === 's') {
-                e.preventDefault();
-                this.save();
-            }
-            
-            // Ctrl+B for bold
-            if (e.ctrlKey && e.key === 'b') {
-                e.preventDefault();
-                document.execCommand('bold');
-            }
-            
-            // Ctrl+I for italic
-            if (e.ctrlKey && e.key === 'i') {
-                e.preventDefault();
-                document.execCommand('italic');
-            }
-        });
-        
-        // Prevent paste formatting issues
-        this.editor.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-            document.execCommand('insertText', false, text);
-        });
+
+    loadDocument(docId) {
+        const doc = Documents.get(docId);
+        this.currentDoc = docId;
+        const saved = Storage.getDocument(docId);
+        if (saved) {
+            this.element.innerHTML = saved;
+        } else {
+            const settings = Storage.getSettings();
+            const rendered = Documents.render(docId, settings);
+            this.element.innerHTML = this.textToHtml(rendered);
+        }
+        if (UI.tabs) {
+            UI.tabs.currentTab = docId;
+        }
     },
-    
-    /**
-     * Auto-save with debounce
-     */
+
+    textToHtml(text) {
+        return text.split(/\n\n+/).map(paragraph => {
+            const trimmed = paragraph.trim();
+            if (/^\d+\./.test(trimmed)) {
+                return '<h3>' + trimmed + '</h3>';
+            }
+            if (/^-\s/.test(trimmed)) {
+                return '<p>' + trimmed + '</p>';
+            }
+            return '<p>' + trimmed + '</p>';
+        }).join('\n');
+    },
+
     autoSave() {
-        clearTimeout(this.autoSaveTimer);
-        this.autoSaveTimer = setTimeout(() => {
-            this.save();
-        }, 1000);
+        if (this.currentDoc && this.element) {
+            Storage.saveDocument(this.currentDoc, this.element.innerHTML);
+        }
     },
-    
-    /**
-     * Save editor content
-     */
-    save() {
-        if (!this.isDirty) return;
-        
-        const content = this.editor.innerHTML;
-        Storage.saveDocument(UI.currentDoc, content);
-        this.isDirty = false;
-    },
-    
-    /**
-     * Set editor content
-     * @param {string} content - HTML content
-     */
-    setContent(content) {
-        this.editor.innerHTML = content;
-        this.isDirty = false;
-    },
-    
-    /**
-     * Get editor content
-     * @returns {string} HTML content
-     */
+
     getContent() {
-        return this.editor.innerHTML;
+        return this.element ? this.element.innerHTML : '';
     },
-    
-    /**
-     * Clear editor content
-     */
-    clear() {
-        this.editor.innerHTML = '';
-        this.isDirty = true;
+
+    setContent(html) {
+        this.element.innerHTML = html;
     },
-    
-    /**
-     * Insert HTML at cursor position
-     * @param {string} html - HTML to insert
-     */
-    insertHTML(html) {
-        this.editor.focus();
-        document.execCommand('insertHTML', false, html);
-        this.isDirty = true;
+
+    handleKeyboard(e) {
+        if (e.ctrlKey && e.key === 'b') {
+            e.preventDefault();
+            document.execCommand('bold');
+        }
+        if (e.ctrlKey && e.key === 'i') {
+            e.preventDefault();
+            document.execCommand('italic');
+        }
+        if (e.ctrlKey && e.key === 'u') {
+            e.preventDefault();
+            document.execCommand('underline');
+        }
     },
-    
-    /**
-     * Execute document command
-     * @param {string} command - Command name
-     * @param {string} value - Command value (optional)
-     */
-    executeCommand(command, value = null) {
-        this.editor.focus();
-        document.execCommand(command, false, value);
-        this.isDirty = true;
+
+    getRenderedHtml() {
+        const settings = Storage.getSettings();
+        let content = this.getContent();
+        content = content.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+            return settings[key] !== undefined ? settings[key] : match;
+        });
+        content = content.replace(/\{%\s*if\s+(\w+)\s*%\}([\s\S]*?)\{%\s*endif\s*%\}/g, (match, key, inner) => {
+            try {
+                return new Function('settings', `return settings.${key} ? \`${inner}\` : ''`)(settings);
+            } catch {
+                return '';
+            }
+        });
+        return content;
     }
 };

@@ -1,164 +1,166 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Legal Pages Constructor</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Конструктор юридических документов для интернет-магазинов на OpenCart">
+  <title>Legal Pages Constructor</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="app">
-        <header class="header">
-            <div class="header__left">
-                <button id="settingsBtn">⚙️</button>
-                <h1 class="header__title">Legal Pages Constructor</h1>
-            </div>
-            <div class="header__right">
-                <button id="helpBtn">? Справка</button>
-            </div>
-        </header>
-        
-        <div class="main">
-            <aside class="sidebar">
-                <nav id="docTabs">
-                    <button class="sidebar__tab sidebar__tab--active" data-doc="offer">ОФЕРТА</button>
-                    <button class="sidebar__tab" data-doc="policy">ПДН</button>
-                    <button class="sidebar__tab" data-doc="consent">СОГЛАСИЕ</button>
-                    <button class="sidebar__tab" data-doc="cookie">COOKIE</button>
-                </nav>
-                <div class="sidebar__actions">
-                    <button id="copyBtn">📋 Копировать HTML</button>
-                    <button id="donateBtn">☕ Донаты</button>
-                </div>
-            </aside>
-            
-            <main class="editor">
-                <h2 id="editorTitle">Публичная оферта</h2>
-                <div id="editor" contenteditable></div>
-            </main>
+  <div id="app">
+    <header class="header">
+      <div class="header__left">
+        <button class="btn btn--icon" id="settingsBtn" title="Настройки">⚙️</button>
+        <h1 class="header__title">Legal Pages Constructor</h1>
+      </div>
+      <div class="header__right">
+        <button class="btn btn--ghost" id="helpBtn">? Справка</button>
+      </div>
+    </header>
+
+    <div class="main">
+      <aside class="sidebar">
+        <nav class="sidebar__nav" id="docTabs">
+          <button class="sidebar__tab sidebar__tab--active" data-doc="offer">ОФЕРТА</button>
+          <button class="sidebar__tab" data-doc="policy">ПДН</button>
+          <button class="sidebar__tab" data-doc="consent">СОГЛАСИЕ</button>
+          <button class="sidebar__tab" data-doc="cookie">COOKIE</button>
+        </nav>
+        <div class="sidebar__actions">
+          <button class="btn btn--primary btn--block" id="copyBtn">📋 Копировать HTML</button>
+          <button class="btn btn--ghost btn--block" id="donateBtn">☕ Донаты</button>
         </div>
+      </aside>
+
+      <main class="editor">
+        <h2 class="editor__title" id="editorTitle">Публичная оферта</h2>
+        <div class="editor__content" id="editor" contenteditable="true"></div>
+      </main>
     </div>
-    
-    <div id="settingsModal" class="modal">
-        <div class="modal__overlay"></div>
-        <div class="modal__content">
-            <div class="modal__header">
-                <h2>Настройки магазина</h2>
-                <button class="modal__close">×</button>
-            </div>
-            <div class="modal__body">
-                <form id="settingsForm">
-                    <div class="form-group">
-                        <label for="owner_type">Тип собственника</label>
-                        <select id="owner_type" name="owner_type">
-                            <option value="ИП">ИП</option>
-                            <option value="ООО">ООО</option>
-                            <option value="Самозанятый">Самозанятый</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="full_name">Полное наименование</label>
-                        <input type="text" id="full_name" name="full_name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="inn">ИНН</label>
-                        <input type="text" id="inn" name="inn">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="ogrn">ОГРН</label>
-                        <input type="text" id="ogrn" name="ogrn">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="legal_address">Юридический адрес</label>
-                        <input type="text" id="legal_address" name="legal_address">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="actual_address">Фактический адрес</label>
-                        <input type="text" id="actual_address" name="actual_address">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="phone">Телефон</label>
-                        <input type="tel" id="phone" name="phone">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email_consent">Email для согласий</label>
-                        <input type="email" id="email_consent" name="email_consent">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="site_name">Название сайта</label>
-                        <input type="text" id="site_name" name="site_name">
-                    </div>
-                    
-                    <h3>Банковские реквизиты</h3>
-                    
-                    <div class="form-group">
-                        <label for="bank_name">Наименование банка</label>
-                        <input type="text" id="bank_name" name="bank_name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="bik">БИК</label>
-                        <input type="text" id="bik" name="bik">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="corr_account">Корреспондентский счёт</label>
-                        <input type="text" id="corr_account" name="corr_account">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="reg_account">Расчётный счёт</label>
-                        <input type="text" id="reg_account" name="reg_account">
-                    </div>
-                </form>
-            </div>
-            <div class="modal__footer">
-                <button id="settingsSave">Сохранить и начать</button>
-            </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal" id="settingsModal">
+    <div class="modal__overlay"></div>
+    <div class="modal__content">
+      <div class="modal__header">
+        <h2 class="modal__title">Настройки магазина</h2>
+        <button class="modal__close" id="settingsClose">✕</button>
+      </div>
+      <div class="modal__body">
+        <form id="settingsForm">
+          <div class="form-group">
+            <label class="form-label">Тип собственника</label>
+            <select class="form-input" name="owner_type">
+              <option value="ИП">ИП</option>
+              <option value="ООО">ООО</option>
+              <option value="Самозанятый">Самозанятый</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">ФИО / Название организации</label>
+            <input class="form-input" type="text" name="full_name" placeholder="Иванов Иван Иванович">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ИНН</label>
+            <input class="form-input" type="text" name="inn" placeholder="212408956567">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ОГРНИП / ОГРН</label>
+            <input class="form-input" type="text" name="ogrn" placeholder="318213000027412">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Юридический адрес</label>
+            <input class="form-input" type="text" name="legal_address" placeholder="г. Москва, ул. Примерная, д. 1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Фактический адрес</label>
+            <input class="form-input" type="text" name="actual_address" placeholder="г. Москва, ул. Примерная, д. 1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Телефон</label>
+            <input class="form-input" type="tel" name="phone" placeholder="+7 (999) 123-45-67">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email для связи</label>
+            <input class="form-input" type="email" name="email" placeholder="info@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email для отзыва согласия</label>
+            <input class="form-input" type="email" name="email_consent" placeholder="info@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Название сайта (домен)</label>
+            <input class="form-input" type="text" name="site_name" placeholder="example.ru">
+          </div>
+
+          <h3 class="form-section-title">Банковские реквизиты</h3>
+          <div class="form-group">
+            <label class="form-label">Наименование банка</label>
+            <input class="form-input" type="text" name="bank_name" placeholder='АО "Альфа-Банк"'>
+          </div>
+          <div class="form-group">
+            <label class="form-label">БИК</label>
+            <input class="form-input" type="text" name="bik" placeholder="042202824">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Корр/счёт</label>
+            <input class="form-input" type="text" name="corr_account" placeholder="30101810200000000824">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Расчётный счёт</label>
+            <input class="form-input" type="text" name="reg_account" placeholder="40802810229040009656">
+          </div>
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--primary" id="settingsSave">Сохранить и начать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Donate Modal -->
+  <div class="modal" id="donateModal">
+    <div class="modal__overlay"></div>
+    <div class="modal__content modal__content--small">
+      <div class="modal__header">
+        <h2 class="modal__title">Поддержать проект</h2>
+        <button class="modal__close" id="donateClose">✕</button>
+      </div>
+      <div class="modal__body">
+        <p class="donate__text">Если конструктор сэкономил ваше время — можете отблагодарить автора:</p>
+        <div class="donate__details">
+          <div class="donate__item">
+            <span class="donate__label">ЮMoney:</span>
+            <code class="donate__value">4100112176183832</code>
+          </div>
+          <div class="donate__item">
+            <span class="donate__label">Карта:</span>
+            <code class="donate__value">5599 0021 3241 5086</code>
+          </div>
+          <div class="donate__item">
+            <span class="donate__label">PayPal:</span>
+            <code class="donate__value">tomopencart@gmail.com</code>
+          </div>
         </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost" id="donateCloseBtn">Закрыть</button>
+      </div>
     </div>
-    
-    <div id="donateModal" class="modal modal--small">
-        <div class="modal__overlay"></div>
-        <div class="modal__content">
-            <div class="modal__header">
-                <h2>Поддержать проект</h2>
-                <button class="modal__close">×</button>
-            </div>
-            <div class="modal__body">
-                <p>Если конструктор вам помог, вы можете поддержать проект:</p>
-                <div class="donate-details">
-                    <p><strong>Тинькофф:</strong> 2200 0000 0000 0000</p>
-                    <p><strong>Сбербанк:</strong> 4081 7810 1000 0000 0000</p>
-                </div>
-            </div>
-            <div class="modal__footer">
-                <button class="donate-close">Закрыть</button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="toast">
-        <span id="toastText"></span>
-    </div>
-    
-    <script src="js/storage.js"></script>
-    <script src="js/documents.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/editor.js"></script>
-    <script src="js/app.js"></script>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="toast__text" id="toastText"></span>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/documents.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
