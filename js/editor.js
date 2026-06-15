@@ -14,25 +14,31 @@ const Editor = {
         this.currentDoc = docId;
         let saved = Storage.getDocument(docId);
         if (saved) {
-            // Migrate: in numbered paragraphs bold only the first line, rest is plain text
+            // Migrate saved content: remove wrongly applied <h3> and <strong> from sub-items
             const _tmp = document.createElement('div');
             _tmp.innerHTML = saved;
+            // Convert any remaining <h3> to plain <p>
+            _tmp.querySelectorAll('h3').forEach(h3 => {
+                const p = document.createElement('p');
+                p.innerHTML = h3.innerHTML;
+                h3.parentNode.replaceChild(p, h3);
+            });
+            // Remove <strong> wrapping from sub-item paragraphs (N.N. pattern)
             _tmp.querySelectorAll('p').forEach(p => {
-                // Case 1: entire paragraph is inside <strong> (old format)
                 const s = p.querySelector(':scope > strong');
-                if (s && p.children.length === 1 && /^\d[\d.]*\./.test(s.textContent.trim())) {
+                if (!s) return;
+                const txt = s.textContent.trim();
+                // Only sub-items (1.1., 2.3. etc.) should lose their strong wrap
+                if (/^\d+\.\d/.test(txt)) {
+                    p.innerHTML = s.innerHTML.replace(/<br\s*\/?>/gi, '<br>');
+                }
+                // Multi-line strong: pull first line into strong, rest plain
+                if (/^\d+\.\s/.test(txt) && !/^\d+\.\d/.test(txt)) {
                     const parts = s.innerHTML.split(/<br\s*\/?>/i);
                     if (parts.length > 1) {
-                        p.innerHTML = '<strong>' + parts[0].trim() + '</strong><br>\n' + parts.slice(1).join('<br>\n');
+                        p.innerHTML = '<strong>' + parts[0].trim() + '</strong><br>\n' +
+                            parts.slice(1).join('<br>\n');
                     }
-                    // single-line with full text bold → keep as is (already correct)
-                }
-                // Case 2: old <h3> converted to p without migration yet
-                if (/^<h3>/i.test(p.outerHTML)) {
-                    const txt = p.textContent.trim();
-                    const lines = txt.split('\n');
-                    p.outerHTML = '<p><strong>' + lines[0] + '</strong>' +
-                        (lines.length > 1 ? '<br>\n' + lines.slice(1).join('<br>\n') : '') + '</p>';
                 }
             });
             this.element.innerHTML = _tmp.innerHTML;
@@ -46,21 +52,28 @@ const Editor = {
         }
     },
 
-
     textToHtml(text) {
         if (!text) return '';
         return text.split(/\n\n+/).map(paragraph => {
             const trimmed = paragraph.trim();
             const lines = trimmed.split('\n');
-            // Numbered paragraph: first line bold (heading), rest plain text
-            if (/^\d[\d.]*\./.test(trimmed) && lines.length > 0) {
-                const heading = '<strong>' + lines[0] + '</strong>';
+            const firstLine = lines[0];
+
+            // Top-level section header only: "N. Title" — digit(s) + dot + space, no sub-number
+            // e.g. "1. Термины и определения"  →  bold
+            // "1.1. Публичная оферта..."       →  plain paragraph
+            const isSectionHeader = /^\d+\.\s/.test(firstLine) && !/^\d+\.\d/.test(firstLine);
+
+            if (isSectionHeader) {
+                const heading = '<strong>' + firstLine + '</strong>';
                 if (lines.length === 1) {
                     return '<p>' + heading + '</p>';
                 }
                 const rest = lines.slice(1).join('<br>\n');
                 return '<p>' + heading + '<br>\n' + rest + '</p>';
             }
+
+            // Everything else — plain paragraph
             const formatted = trimmed.replace(/\n/g, '<br>\n');
             return '<p>' + formatted + '</p>';
         }).join('\n');
@@ -97,13 +110,13 @@ const Editor = {
 
     updateSettingsInEditor(settings) {
         if (!this.element) return;
-        
+
         // Find simple placeholders
         const placeholders = this.element.querySelectorAll('span.placeholder[data-placeholder]');
         placeholders.forEach(span => {
             const key = span.getAttribute('data-placeholder');
-            const value = (settings[key] !== undefined && settings[key] !== '') 
-                ? settings[key] 
+            const value = (settings[key] !== undefined && settings[key] !== '')
+                ? settings[key]
                 : Documents.getPlaceholderLabel(key);
             if (span.textContent !== value) {
                 span.textContent = value;
@@ -119,7 +132,7 @@ const Editor = {
                 span.textContent = val;
             }
         });
-        
+
         this.autoSave();
     },
 
@@ -137,3 +150,5 @@ const Editor = {
         return temp.innerHTML;
     }
 };
+
+document.addEventListener('DOMContentLoaded', () => App.init());
