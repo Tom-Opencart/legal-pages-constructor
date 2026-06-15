@@ -14,8 +14,11 @@ const Editor = {
         this.currentDoc = docId;
         let saved = Storage.getDocument(docId);
         if (saved) {
-            // Migrate old h3 section headers to p+strong
-            saved = saved.replace(/<h3>/g, '<p><strong>').replace(/<\/h3>/g, '</strong></p>');
+            // Migrate old h3/p+strong headers: wrap only numeric prefix in strong
+            saved = saved
+                .replace(/<h3>(<strong>)?(\d[\d.]*\.)<\/strong>([^<]*)<\/h3>/g, '<p><strong>$2</strong>$3</p>')
+                .replace(/<h3>(\d[\d.]*\.)([^<]*)<\/h3>/g, '<p><strong>$1</strong>$2</p>')
+                .replace(/<p><strong>(\d[\d.]*\.)([^<]+)<\/strong><\/p>/g, '<p><strong>$1</strong>$2</p>');
             this.element.innerHTML = saved;
         } else {
             const settings = Storage.getSettings();
@@ -33,8 +36,10 @@ const Editor = {
         return text.split(/\n\n+/).map(paragraph => {
             const trimmed = paragraph.trim();
             const formatted = trimmed.replace(/\n/g, '<br>\n');
+            // Wrap only the numeric prefix ("1.", "2.3." etc.) in strong
             if (/^\d+\./.test(trimmed)) {
-                return '<p><strong>' + formatted + '</strong></p>';
+                const withBoldNum = formatted.replace(/^(\d[\d.]*\.)/, '<strong>$1</strong>');
+                return '<p>' + withBoldNum + '</p>';
             }
             return '<p>' + formatted + '</p>';
         }).join('\n');
