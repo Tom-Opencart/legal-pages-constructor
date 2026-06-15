@@ -14,30 +14,50 @@ const Editor = {
         this.currentDoc = docId;
         let saved = Storage.getDocument(docId);
         if (saved) {
-            // Migrate saved content: remove wrongly applied <h3> and <strong> from sub-items
+            // Migrate saved content: convert h3 to p, and correct strong tag wrapping
             const _tmp = document.createElement('div');
             _tmp.innerHTML = saved;
-            // Convert any remaining <h3> to plain <p>
+            
+            // Convert any remaining h3 to plain p wrapped in strong (so next pass corrects them)
             _tmp.querySelectorAll('h3').forEach(h3 => {
                 const p = document.createElement('p');
-                p.innerHTML = h3.innerHTML;
+                p.innerHTML = '<strong>' + h3.innerHTML + '</strong>';
                 h3.parentNode.replaceChild(p, h3);
             });
-            // Remove <strong> wrapping from sub-item paragraphs (N.N. pattern)
+            
+            // Fix strong wrapping in paragraphs
             _tmp.querySelectorAll('p').forEach(p => {
                 const s = p.querySelector(':scope > strong');
                 if (!s) return;
-                const txt = s.textContent.trim();
-                // Only sub-items (1.1., 2.3. etc.) should lose their strong wrap
-                if (/^\d+\.\d/.test(txt)) {
-                    p.innerHTML = s.innerHTML.replace(/<br\s*\/?>/gi, '<br>');
-                }
-                // Multi-line strong: pull first line into strong, rest plain
-                if (/^\d+\.\s/.test(txt) && !/^\d+\.\d/.test(txt)) {
-                    const parts = s.innerHTML.split(/<br\s*\/?>/i);
+                
+                // Only migrate if the strong tag is the only content-carrying child of the paragraph
+                const isEntirelyStrong = Array.from(p.childNodes).every(node => 
+                    node === s || (node.nodeType === 3 && !node.textContent.trim())
+                );
+                if (!isEntirelyStrong) return;
+                
+                const strongContent = s.innerHTML;
+                const parts = strongContent.split(/<br\s*\/?>/i);
+                const firstLine = parts[0].trim();
+                
+                const isTopLevelHeader = /^\d+\.\s/.test(firstLine) && !/^\d+\.\d/.test(firstLine);
+                const isSubLevelHeader = /^\d+\.\d/.test(firstLine);
+                
+                if (isTopLevelHeader) {
+                    const match = firstLine.match(/^(\d+\.)\s*(.*)$/);
+                    if (match) {
+                        let newHtml = '<strong>' + match[1] + '</strong> ' + match[2];
+                        if (parts.length > 1) {
+                            newHtml += '<br>\n' + parts.slice(1).join('<br>\n');
+                        }
+                        p.innerHTML = newHtml;
+                    }
+                } else if (isSubLevelHeader) {
                     if (parts.length > 1) {
-                        p.innerHTML = '<strong>' + parts[0].trim() + '</strong><br>\n' +
-                            parts.slice(1).join('<br>\n');
+                        let newHtml = '<strong>' + firstLine + '</strong><br>\n' + parts.slice(1).join('<br>\n');
+                        p.innerHTML = newHtml;
+                    } else {
+                        p.innerHTML = strongContent;
                     }
                 }
             });
@@ -59,16 +79,29 @@ const Editor = {
             const lines = trimmed.split('\n');
             const firstLine = lines[0];
 
-            // Top-level section header only: "N. Title" — digit(s) + dot + space, no sub-number
-            // e.g. "1. Термины и определения"  →  bold
-            // "1.1. Публичная оферта..."       →  plain paragraph
+            // Top-level section header only: "N. Title"
             const isSectionHeader = /^\d+\.\s/.test(firstLine) && !/^\d+\.\d/.test(firstLine);
+            
+            // Sub-section header with list items: "N.N. Title" and lines.length > 1
+            const isSubSectionHeader = /^\d+(\.\d+)+\.?\s/.test(firstLine) && lines.length > 1;
 
             if (isSectionHeader) {
-                const heading = '<strong>' + firstLine + '</strong>';
-                if (lines.length === 1) {
-                    return '<p>' + heading + '</p>';
+                const match = firstLine.match(/^(\d+\.)\s*(.*)$/);
+                let heading;
+                if (match) {
+                    heading = '<strong>' + match[1] + '</strong> ' + match[2];
+                } else {
+                    heading = '<strong>' + firstLine + '</strong>';
                 }
+                if (lines.length === 1) {
+                     return '<p>' + heading + '</p>';
+                }
+                const rest = lines.slice(1).join('<br>\n');
+                return '<p>' + heading + '<br>\n' + rest + '</p>';
+            }
+
+            if (isSubSectionHeader) {
+                const heading = '<strong>' + firstLine + '</strong>';
                 const rest = lines.slice(1).join('<br>\n');
                 return '<p>' + heading + '<br>\n' + rest + '</p>';
             }
