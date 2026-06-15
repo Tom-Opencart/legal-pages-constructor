@@ -14,12 +14,28 @@ const Editor = {
         this.currentDoc = docId;
         let saved = Storage.getDocument(docId);
         if (saved) {
-            // Migrate old h3/p+strong headers: wrap only numeric prefix in strong
-            saved = saved
-                .replace(/<h3>(<strong>)?(\d[\d.]*\.)<\/strong>([^<]*)<\/h3>/g, '<p><strong>$2</strong>$3</p>')
-                .replace(/<h3>(\d[\d.]*\.)([^<]*)<\/h3>/g, '<p><strong>$1</strong>$2</p>')
-                .replace(/<p><strong>(\d[\d.]*\.)([^<]+)<\/strong><\/p>/g, '<p><strong>$1</strong>$2</p>');
-            this.element.innerHTML = saved;
+            // Migrate: in numbered paragraphs bold only the first line, rest is plain text
+            const _tmp = document.createElement('div');
+            _tmp.innerHTML = saved;
+            _tmp.querySelectorAll('p').forEach(p => {
+                // Case 1: entire paragraph is inside <strong> (old format)
+                const s = p.querySelector(':scope > strong');
+                if (s && p.children.length === 1 && /^\d[\d.]*\./.test(s.textContent.trim())) {
+                    const parts = s.innerHTML.split(/<br\s*\/?>/i);
+                    if (parts.length > 1) {
+                        p.innerHTML = '<strong>' + parts[0].trim() + '</strong><br>\n' + parts.slice(1).join('<br>\n');
+                    }
+                    // single-line with full text bold → keep as is (already correct)
+                }
+                // Case 2: old <h3> converted to p without migration yet
+                if (/^<h3>/i.test(p.outerHTML)) {
+                    const txt = p.textContent.trim();
+                    const lines = txt.split('\n');
+                    p.outerHTML = '<p><strong>' + lines[0] + '</strong>' +
+                        (lines.length > 1 ? '<br>\n' + lines.slice(1).join('<br>\n') : '') + '</p>';
+                }
+            });
+            this.element.innerHTML = _tmp.innerHTML;
         } else {
             const settings = Storage.getSettings();
             const rendered = Documents.render(docId, settings);
@@ -35,12 +51,17 @@ const Editor = {
         if (!text) return '';
         return text.split(/\n\n+/).map(paragraph => {
             const trimmed = paragraph.trim();
-            const formatted = trimmed.replace(/\n/g, '<br>\n');
-            // Wrap only the numeric prefix ("1.", "2.3." etc.) in strong
-            if (/^\d+\./.test(trimmed)) {
-                const withBoldNum = formatted.replace(/^(\d[\d.]*\.)/, '<strong>$1</strong>');
-                return '<p>' + withBoldNum + '</p>';
+            const lines = trimmed.split('\n');
+            // Numbered paragraph: first line bold (heading), rest plain text
+            if (/^\d[\d.]*\./.test(trimmed) && lines.length > 0) {
+                const heading = '<strong>' + lines[0] + '</strong>';
+                if (lines.length === 1) {
+                    return '<p>' + heading + '</p>';
+                }
+                const rest = lines.slice(1).join('<br>\n');
+                return '<p>' + heading + '<br>\n' + rest + '</p>';
             }
+            const formatted = trimmed.replace(/\n/g, '<br>\n');
             return '<p>' + formatted + '</p>';
         }).join('\n');
     },
