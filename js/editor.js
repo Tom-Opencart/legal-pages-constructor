@@ -62,6 +62,8 @@ const Editor = {
                 }
             });
             this.element.innerHTML = _tmp.innerHTML;
+            // Always sync placeholders with the latest settings on load
+            this.updateSettingsInEditor(Storage.getSettings());
         } else {
             const settings = Storage.getSettings();
             const rendered = Documents.render(docId, settings);
