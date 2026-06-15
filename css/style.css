@@ -1,0 +1,330 @@
+/* Legal Pages Constructor Styles */
+
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #2c3e50;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header__left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.header__right {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Buttons */
+button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+#settingsBtn, #helpBtn {
+    background-color: #34495e;
+    color: white;
+}
+
+#settingsBtn:hover, #helpBtn:hover {
+    background-color: #4a6274;
+}
+
+#copyBtn, #donateBtn {
+    background-color: #3498db;
+    color: white;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+#copyBtn:hover, #donateBtn:hover {
+    background-color: #2980b9;
+}
+
+#settingsSave {
+    background-color: #27ae60;
+    color: white;
+}
+
+#settingsSave:hover {
+    background-color: #219a52;
+}
+
+/* Main layout */
+.main {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 200px;
+    background-color: #ecf0f1;
+    padding: 1rem;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#docTabs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar__tab {
+    padding: 0.75rem;
+    text-align: left;
+    background-color: #bdc3c7;
+    color: #2c3e50;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.sidebar__tab:hover {
+    background-color: #95a5a6;
+}
+
+.sidebar__tab--active {
+    background-color: #3498db;
+    color: white;
+}
+
+.sidebar__actions {
+    margin-top: 1rem;
+}
+
+/* Editor */
+.editor {
+    flex: 1;
+    padding: 2rem;
+    background-color: white;
+    overflow-y: auto;
+}
+
+#editorTitle {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+#editor {
+    min-height: 500px;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal__content {
+    position: relative;
+    background-color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal--small .modal__content {
+    max-width: 400px;
+}
+
+.modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.modal__close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal__body {
+    padding: 1.5rem;
+}
+
+.modal__footer {
+    padding: 1.5rem;
+    border-top: 1px solid #eee;
+    text-align: right;
+}
+
+/* Form */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+h3 {
+    margin: 1.5rem 0 1rem;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+/* Donate modal */
+.donate-details {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+.donate-details p {
+    margin: 0.5rem 0;
+}
+
+.donate-close {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.donate-close:hover {
+    background-color: #7f8c8d;
+}
+
+/* Toast */
+#toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: #2c3e50;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 2000;
+}
+
+#toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    #docTabs {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .sidebar__tab {
+        flex: 1;
+        min-width: 80px;
+    }
+    
+    .sidebar__actions {
+        display: flex;
+        flex-direction: column;
+        margin-top: 0;
+        margin-left: 1rem;
+    }
+    
+    .modal__content {
+        width: 95%;
+        max-height: 85vh;
+    }
+}
