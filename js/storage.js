@@ -56,11 +56,36 @@ const Storage = {
     },
 
     /**
+     * Get synchronized site URL from localStorage.
+     * @returns {string|null}
+     */
+    getSiteUrl() {
+        return localStorage.getItem('constructor_site_url');
+    },
+
+    /**
+     * Save site URL to localStorage.
+     * @param {string} url
+     */
+    saveSiteUrl(url) {
+        if (url) {
+            localStorage.setItem('constructor_site_url', url);
+        } else {
+            localStorage.removeItem('constructor_site_url');
+        }
+    },
+
+    /**
      * Get saved constructor settings.
      * @returns {Object} Settings object or empty object if none exist.
      */
     getSettings() {
-        return this.get(this.KEYS.SETTINGS) || {};
+        const settings = this.get(this.KEYS.SETTINGS) || {};
+        const siteUrl = this.getSiteUrl();
+        if (siteUrl) {
+            settings.site_name = siteUrl;
+        }
+        return settings;
     },
 
     /**

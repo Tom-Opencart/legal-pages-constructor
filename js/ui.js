@@ -23,11 +23,10 @@ const UI = {
       }
     },
     init() {
-      document.querySelectorAll('.modal__overlay').forEach(overlay => {
-        overlay.addEventListener('click', () => {
-          const modal = overlay.closest('.modal');
-          if (modal) {
-            modal.classList.remove('modal--active');
+      document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) {
+            overlay.classList.remove('modal--active');
             document.body.style.overflow = '';
           }
         });
@@ -35,7 +34,7 @@ const UI = {
 
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          const activeModal = document.querySelector('.modal--active');
+          const activeModal = document.querySelector('.modal-overlay.modal--active');
           if (activeModal) {
             activeModal.classList.remove('modal--active');
             document.body.style.overflow = '';
@@ -49,8 +48,8 @@ const UI = {
     currentTab: 'offer',
 
     switchTo(tabId) {
-      document.querySelectorAll('.sidebar__tab').forEach(btn => {
-        btn.classList.toggle('sidebar__tab--active', btn.dataset.doc === tabId);
+      document.querySelectorAll('.block-btn[data-doc]').forEach(btn => {
+        btn.classList.toggle('block-btn--active', btn.dataset.doc === tabId);
       });
 
       this.currentTab = tabId;
@@ -69,7 +68,7 @@ const UI = {
     },
 
     init() {
-      document.querySelectorAll('.sidebar__tab').forEach(btn => {
+      document.querySelectorAll('.block-btn[data-doc]').forEach(btn => {
         btn.addEventListener('click', () => {
           this.switchTo(btn.dataset.doc);
         });

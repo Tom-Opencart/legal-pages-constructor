@@ -26,15 +26,14 @@ const Editor = {
     },
 
     textToHtml(text) {
+        if (!text) return '';
         return text.split(/\n\n+/).map(paragraph => {
             const trimmed = paragraph.trim();
+            const formatted = trimmed.replace(/\n/g, '<br>\n');
             if (/^\d+\./.test(trimmed)) {
-                return '<h3>' + trimmed + '</h3>';
+                return '<h3>' + formatted + '</h3>';
             }
-            if (/^-\s/.test(trimmed)) {
-                return '<p>' + trimmed + '</p>';
-            }
-            return '<p>' + trimmed + '</p>';
+            return '<p>' + formatted + '</p>';
         }).join('\n');
     },
 
@@ -67,19 +66,45 @@ const Editor = {
         }
     },
 
-    getRenderedHtml() {
-        const settings = Storage.getSettings();
-        let content = this.getContent();
-        content = content.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-            return settings[key] !== undefined ? settings[key] : match;
-        });
-        content = content.replace(/\{%\s*if\s+(\w+)\s*%\}([\s\S]*?)\{%\s*endif\s*%\}/g, (match, key, inner) => {
-            try {
-                return new Function('settings', `return settings.${key} ? \`${inner}\` : ''`)(settings);
-            } catch {
-                return '';
+    updateSettingsInEditor(settings) {
+        if (!this.element) return;
+        
+        // Find simple placeholders
+        const placeholders = this.element.querySelectorAll('span.placeholder[data-placeholder]');
+        placeholders.forEach(span => {
+            const key = span.getAttribute('data-placeholder');
+            const value = (settings[key] !== undefined && settings[key] !== '') 
+                ? settings[key] 
+                : Documents.getPlaceholderLabel(key);
+            if (span.textContent !== value) {
+                span.textContent = value;
             }
         });
-        return content;
+
+        // Find expression placeholders
+        const exprPlaceholders = this.element.querySelectorAll('span.placeholder[data-expr]');
+        exprPlaceholders.forEach(span => {
+            const expr = span.getAttribute('data-expr');
+            const val = Documents.evaluateExpression(expr, settings);
+            if (span.textContent !== val) {
+                span.textContent = val;
+            }
+        });
+        
+        this.autoSave();
+    },
+
+    getRenderedHtml() {
+        const temp = document.createElement('div');
+        temp.innerHTML = this.getContent();
+
+        // Replace all span.placeholder elements with their text contents
+        const spans = temp.querySelectorAll('span.placeholder');
+        spans.forEach(span => {
+            const textNode = document.createTextNode(span.textContent);
+            span.parentNode.replaceChild(textNode, span);
+        });
+
+        return temp.innerHTML;
     }
 };

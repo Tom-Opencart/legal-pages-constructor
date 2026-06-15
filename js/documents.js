@@ -309,7 +309,85 @@ Email: {{email}}`
 ИНН: {{inn}}
 ОГРН: {{ogrn}}`
         },
-        
+
+        agreement: {
+            id: 'agreement',
+            title: 'Пользовательское соглашение',
+            slug: 'user-agreement',
+            template: `ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ
+
+Настоящее Пользовательское соглашение регулирует отношения между {{owner_type}} {{full_name}} (далее — «Администрация») и пользователем сайта {{site_name}} (далее — «Пользователь»).
+
+1. Общие положения
+
+1.1. Использование сайта {{site_name}} (далее — «Сайт») означает согласие Пользователя с условиями настоящего Соглашения. В случае несогласия с условиями Пользователь должен прекратить использование Сайта.
+
+1.2. Администрация оставляет за собой право в одностороннем порядке изменять условия настоящего Соглашения без предварительного уведомления Пользователя. Новая редакция вступает в силу с момента ее публикации на Сайте.
+
+2. Права и обязанности сторон
+
+2.1. Пользователь имеет право:
+— использовать материалы и функции Сайта в личных, некоммерческих целях;
+— направлять Администрации вопросы и предложения по адресу электронной почты: {{email}}.
+
+2.2. Пользователь обязуется:
+— не предпринимать действий, направленных на нарушение работы Сайта;
+— не использовать автоматизированные программы для сбора информации с Сайта.
+
+2.3. Администрация имеет право:
+— в любое время изменять оформление Сайта, его контент и функции;
+— ограничивать доступ к Сайту в случае нарушения Пользователем условий настоящего Соглашения.
+
+3. Ограничение ответственности
+
+3.1. Сайт и все его функции предоставляются на условиях «как есть». Администрация не гарантирует бесперебойную и безошибочную работу Сайта.
+
+3.2. Администрация не несет ответственности за убытки или вред, возникшие у Пользователя в результате использования или невозможности использования Сайта.
+
+4. Заключительные положения
+
+4.1. Все возможные споры, вытекающие из настоящего Соглашения или связанные с ним, подлежат разрешению в соответствии с действующим законодательством Российской Федерации.
+
+4.2. Настоящее Соглашение представляет собой договор между Пользователем и Администрацией относительно порядка использования Сайта.
+
+{{owner_type}}: {{full_name}}
+ИНН: {{inn}}
+ОГРН: {{ogrn}}
+Адрес: {{legal_address}}
+Email: {{email}}`
+        },
+
+        newsletter: {
+            id: 'newsletter',
+            title: 'Согласие на получение рассылки',
+            slug: 'newsletter-consent',
+            template: `СОГЛАСИЕ
+на получение рекламных и информационных рассылок
+
+Я, Пользователь сайта {{site_name}}, настоящим в соответствии с Федеральным законом от 13.03.2006 № 38-ФЗ «О рекламе» и Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных» выражаю свое согласие {{owner_type}} {{full_name}}, ИНН {{inn}}, ОГРН {{ogrn}} (далее — «Продавец») на получение рассылок.
+
+1. Условия получения рассылок
+
+1.1. Настоящим выражаю согласие на получение информационных и рекламных сообщений (включая информацию о скидках, акциях, новых поступлениях товаров, новостях магазина и иных маркетинговых мероприятиях).
+
+1.2. Сообщения могут направляться на указанный мной адрес электронной почты (e-mail) и/или номер мобильного телефона посредством SMS-сообщений, звонков, push-уведомлений, мессенджеров (Viber, WhatsApp, Telegram и др.) или иных каналов связи.
+
+2. Срок действия и порядок отзыва согласия
+
+2.1. Настоящее согласие действует с момента его предоставления и до момента его отзыва Пользователем.
+
+2.2. Согласие может быть отозвано в любой момент путем:
+— перехода по ссылке «Отписаться» в теле любого рекламного письма;
+— направления соответствующего письменного заявления на адрес электронной почты Продавца: {{email_consent}} или {{email}}.
+
+2.3. Продавец обязуется прекратить направление рассылок в течение 3 (трех) рабочих дней с момента получения заявления об отзыве согласия.
+
+{{owner_type}}: {{full_name}}
+ИНН: {{inn}}
+ОГРН: {{ogrn}}
+Email: {{email}}`
+        },
+
         cookie: {
             id: 'cookie',
             title: 'О технологии куки (Cookie)',
@@ -420,30 +498,56 @@ Email: {{email}}`
         
         let template = doc.template;
         
-        // Process conditional expressions first
-        const conditionalRegex = /\{\{(.*?)\}\}/g;
-        template = template.replace(conditionalRegex, (match, expression) => {
-            try {
-                // Create a function with settings variables in scope
-                const functionBody = `
-                    with(settings) {
-                        return ${expression};
-                    }
-                `;
-                const func = new Function('settings', functionBody);
-                return func(settings);
-            } catch (e) {
-                console.error('Error evaluating expression:', expression, e);
-                return match;
+        const regex = /\{\{(.*?)\}\}/g;
+        template = template.replace(regex, (match, expression) => {
+            const trimmed = expression.trim();
+            if (/^\w+$/.test(trimmed)) {
+                const value = (settings[trimmed] !== undefined && settings[trimmed] !== '') 
+                    ? settings[trimmed] 
+                    : this.getPlaceholderLabel(trimmed);
+                return `<span class="placeholder" contenteditable="false" data-placeholder="${trimmed}">${value}</span>`;
+            } else {
+                const val = this.evaluateExpression(trimmed, settings);
+                return `<span class="placeholder placeholder--expr" contenteditable="false" data-expr="${trimmed}">${val}</span>`;
             }
         });
         
-        // Process simple variable replacements
-        const variableRegex = /\{\{(\w+)\}\}/g;
-        template = template.replace(variableRegex, (match, variable) => {
-            return settings[variable] !== undefined ? settings[variable] : match;
-        });
-        
         return template;
+    },
+
+    getPlaceholderLabel(key) {
+        const labels = {
+            owner_type: 'Тип владельца (ИП/ООО/Физическое лицо)',
+            full_name: 'ФИО / Название организации',
+            site_name: 'Сайт (домен)',
+            inn: 'ИНН',
+            ogrn: 'ОГРН/ОГРНИП',
+            legal_address: 'Юридический адрес',
+            actual_address: 'Фактический адрес',
+            phone: 'Телефон',
+            email: 'E-mail для контактов',
+            email_consent: 'E-mail для отзывов ПДн',
+            bank_name: 'Наименование банка',
+            bik: 'БИК банка',
+            corr_account: 'Корреспондентский счёт',
+            reg_account: 'Расчётный счёт'
+        };
+        return labels[key] || `[${key}]`;
+    },
+
+    evaluateExpression(expression, settings) {
+        try {
+            const functionBody = `
+                with(settings) {
+                    return ${expression};
+                }
+            `;
+            const func = new Function('settings', functionBody);
+            const val = func(settings);
+            return val !== undefined ? val : '';
+        } catch (e) {
+            console.error('Error evaluating expression:', expression, e);
+            return '';
+        }
     }
 };

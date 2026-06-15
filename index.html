@@ -3,151 +3,297 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Конструктор юридических документов для интернет-магазинов на OpenCart">
-  <title>Legal Pages Constructor</title>
+  <meta name="description" content="Конструктор юридических документов (Оферта, Политика ПДн, Согласия) по 152-ФЗ, 38-ФЗ и ГК РФ для интернет-магазинов на OpenCart">
+  <title>Конструктор документов по 152-ФЗ, 38-ФЗ и ГК РФ для OpenCart</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div id="app">
     <header class="header">
-      <div class="header__left">
-        <button class="btn btn--icon" id="settingsBtn" title="Настройки">⚙️</button>
-        <h1 class="header__title">Legal Pages Constructor</h1>
+      <div class="header-left">
+        <div class="header-brand">
+          <div class="header-title">Документы по 152-ФЗ, 38-ФЗ и ГК РФ</div>
+          <div class="header-meta">
+            <span>Автор Tom</span>
+            <span class="build-indicator">v3.0.4.3</span>
+          </div>
+        </div>
       </div>
-      <div class="header__right">
-        <button class="btn btn--ghost" id="helpBtn">? Справка</button>
+      <div class="header-center">
+        <!-- ФИО / Организация input -->
+        <div class="hint-wrapper hint-wrapper--title">
+          <span class="slug-hint">ФИО:</span>
+          <input type="text" class="header-title-input" id="headerFullName" placeholder="Иванов Иван Иванович">
+        </div>
+        <!-- Сайт (домен) input -->
+        <div class="hint-wrapper hint-wrapper--domain">
+          <span class="slug-hint">Сайт:</span>
+          <input type="text" class="header-domain-input" id="headerSiteName" placeholder="myshop.ru">
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-ghost" id="helpBtn" title="Справка">? Справка</button>
+        <button class="btn btn-secondary btn-icon" id="settingsBtn" title="Настройки">⚙️</button>
+        <button class="btn btn-success" id="copyBtn">Копировать код</button>
       </div>
     </header>
 
     <div class="main">
-      <aside class="sidebar">
-        <nav class="sidebar__nav" id="docTabs">
-          <button class="sidebar__tab sidebar__tab--active" data-doc="offer">ОФЕРТА</button>
-          <button class="sidebar__tab" data-doc="policy">ПДН</button>
-          <button class="sidebar__tab" data-doc="consent">СОГЛАСИЕ</button>
-          <button class="sidebar__tab" data-doc="cookie">COOKIE</button>
-        </nav>
-        <div class="sidebar__actions">
-          <button class="btn btn--primary btn--block" id="copyBtn">📋 Копировать HTML</button>
-          <button class="btn btn--ghost btn--block" id="donateBtn">☕ Донаты</button>
+      <aside class="panel-left">
+        <div class="block-buttons" id="docTabs">
+          <div class="palette-group-title">Магазин</div>
+          <button class="block-btn" id="sidebarSettingsBtn">
+            <span class="block-btn-icon">⚙️</span>
+            <span>Заполнить реквизиты</span>
+          </button>
+
+          <div class="palette-group-title">Документы</div>
+          
+          <button class="block-btn block-btn--active" data-doc="offer">
+            <span class="block-btn-icon">📜</span>
+            <span>Публичная оферта</span>
+          </button>
+          <button class="block-btn" data-doc="policy">
+            <span class="block-btn-icon">🛡️</span>
+            <span>Политика конфиденциальности</span>
+          </button>
+          <button class="block-btn" data-doc="consent">
+            <span class="block-btn-icon">✍️</span>
+            <span>Согласие на обработку ПДн</span>
+          </button>
+          <button class="block-btn" data-doc="agreement">
+            <span class="block-btn-icon">🤝</span>
+            <span>Пользовательское соглашение</span>
+          </button>
+          <button class="block-btn" data-doc="newsletter">
+            <span class="block-btn-icon">✉️</span>
+            <span>Согласие на рассылку</span>
+          </button>
+          <button class="block-btn" data-doc="cookie">
+            <span class="block-btn-icon">🍪</span>
+            <span>Политика использования Cookie</span>
+          </button>
+          
+          <div class="palette-group-title">Навигация</div>
+          <button class="block-btn block-btn--nav" id="btnNavArticle">
+            <span class="block-btn-icon">📝</span>
+            <span>Конструктор статей</span>
+          </button>
+        </div>
+        
+        <div class="panel-support">
+          <button class="block-btn donate-btn" id="donateBtn" title="Отблагодарить автора">
+            <span class="block-btn-icon"><i class="fa fa-heart"></i></span>
+            <span class="block-btn-label" style="font-weight: 600;">Отблагодарить</span>
+          </button>
         </div>
       </aside>
 
-      <main class="editor">
-        <h2 class="editor__title" id="editorTitle">Публичная оферта</h2>
-        <div class="editor__content" id="editor" contenteditable="true"></div>
-      </main>
+      <div class="workspace">
+        <div class="editor-sheet">
+          <button class="editor-sheet-copy-btn" id="sheetCopyBtn" title="Копировать HTML-код">
+            <i class="fa fa-clone"></i>
+          </button>
+          <div class="editor-sheet-header">
+            <h2 class="editor__title" id="editorTitle">Публичная оферта</h2>
+          </div>
+          <div class="editor-helper-hint">
+            <i class="fa-solid fa-pen-to-square"></i> Текст ниже можно редактировать — просто нажмите в любом месте и начните вносить изменения.
+          </div>
+          <div class="editor__content" id="editor" contenteditable="true"></div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Settings Modal -->
-  <div class="modal" id="settingsModal">
-    <div class="modal__overlay"></div>
-    <div class="modal__content">
-      <div class="modal__header">
-        <h2 class="modal__title">Настройки магазина</h2>
-        <button class="modal__close" id="settingsClose">✕</button>
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2>Настройки магазина</h2>
+        <button class="modal-close" id="settingsClose">✕</button>
       </div>
-      <div class="modal__body">
+      <div class="modal-body">
         <form id="settingsForm">
           <div class="form-group">
-            <label class="form-label">Тип собственника</label>
-            <select class="form-input" name="owner_type">
+            <label>Тип собственника</label>
+            <select name="owner_type">
               <option value="ИП">ИП</option>
               <option value="ООО">ООО</option>
               <option value="Самозанятый">Самозанятый</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">ФИО / Название организации</label>
-            <input class="form-input" type="text" name="full_name" placeholder="Иванов Иван Иванович">
+            <label>ФИО / Название организации</label>
+            <input type="text" name="full_name" placeholder="Иванов Иван Иванович">
           </div>
           <div class="form-group">
-            <label class="form-label">ИНН</label>
-            <input class="form-input" type="text" name="inn" placeholder="212408956567">
+            <label>ИНН</label>
+            <input type="text" name="inn" placeholder="212408956567">
           </div>
           <div class="form-group">
-            <label class="form-label">ОГРНИП / ОГРН</label>
-            <input class="form-input" type="text" name="ogrn" placeholder="318213000027412">
+            <label>ОГРНИП / ОГРН</label>
+            <input type="text" name="ogrn" placeholder="318213000027412">
           </div>
           <div class="form-group">
-            <label class="form-label">Юридический адрес</label>
-            <input class="form-input" type="text" name="legal_address" placeholder="г. Москва, ул. Примерная, д. 1">
+            <label>Юридический адрес</label>
+            <input type="text" name="legal_address" placeholder="г. Москва, ул. Примерная, д. 1">
           </div>
           <div class="form-group">
-            <label class="form-label">Фактический адрес</label>
-            <input class="form-input" type="text" name="actual_address" placeholder="г. Москва, ул. Примерная, д. 1">
+            <label>Фактический адрес</label>
+            <input type="text" name="actual_address" placeholder="г. Москва, ул. Примерная, д. 1">
           </div>
           <div class="form-group">
-            <label class="form-label">Телефон</label>
-            <input class="form-input" type="tel" name="phone" placeholder="+7 (999) 123-45-67">
+            <label>Телефон</label>
+            <input type="tel" name="phone" placeholder="+7 (999) 123-45-67">
           </div>
           <div class="form-group">
-            <label class="form-label">Email для связи</label>
-            <input class="form-input" type="email" name="email" placeholder="info@example.com">
+            <label>Email для связи</label>
+            <input type="email" name="email" placeholder="info@example.com">
           </div>
           <div class="form-group">
-            <label class="form-label">Email для отзыва согласия</label>
-            <input class="form-input" type="email" name="email_consent" placeholder="info@example.com">
+            <label>Email для отзыва согласия</label>
+            <input type="email" name="email_consent" placeholder="info@example.com">
           </div>
           <div class="form-group">
-            <label class="form-label">Название сайта (домен)</label>
-            <input class="form-input" type="text" name="site_name" placeholder="example.ru">
+            <label>Название сайта (домен)</label>
+            <input type="text" name="site_name" placeholder="example.ru">
           </div>
 
           <h3 class="form-section-title">Банковские реквизиты</h3>
           <div class="form-group">
-            <label class="form-label">Наименование банка</label>
-            <input class="form-input" type="text" name="bank_name" placeholder='АО "Альфа-Банк"'>
+            <label>Наименование банка</label>
+            <input type="text" name="bank_name" placeholder='АО "Альфа-Банк"'>
           </div>
           <div class="form-group">
-            <label class="form-label">БИК</label>
-            <input class="form-input" type="text" name="bik" placeholder="042202824">
+            <label>БИК</label>
+            <input type="text" name="bik" placeholder="042202824">
           </div>
           <div class="form-group">
-            <label class="form-label">Корр/счёт</label>
-            <input class="form-input" type="text" name="corr_account" placeholder="30101810200000000824">
+            <label>Корр/счёт</label>
+            <input type="text" name="corr_account" placeholder="30101810200000000824">
           </div>
           <div class="form-group">
-            <label class="form-label">Расчётный счёт</label>
-            <input class="form-input" type="text" name="reg_account" placeholder="40802810229040009656">
+            <label>Расчётный счёт</label>
+            <input type="text" name="reg_account" placeholder="40802810229040009656">
           </div>
         </form>
       </div>
-      <div class="modal__footer">
-        <button class="btn btn--primary" id="settingsSave">Сохранить и начать</button>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="settingsSave">Сохранить и начать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal-window" style="max-width: 650px; width: 90%;">
+      <div class="modal-header">
+        <h2>⚖️ Справка и руководство</h2>
+        <button class="modal-close" id="helpClose">✕</button>
+      </div>
+      <div class="modal-body help-modal-body">
+        <section class="help-section">
+          <h3>Как пользоваться конструктором</h3>
+          <ol class="help-steps">
+            <li>
+              <strong>Заполните реквизиты:</strong> Нажмите кнопку <strong>«Заполнить реквизиты»</strong> в левой панели или иконку ⚙️ вверху. Данные вашего магазина мгновенно подставятся во все документы.
+            </li>
+            <li>
+              <strong>Отредактируйте текст (при необходимости):</strong> Выберите документ слева. Текст на листе можно менять напрямую (кликните в любом месте). Вы можете выделять текст и форматировать его: <code>Ctrl + B</code> (жирный), <code>Ctrl + I</code> (курсив), <code>Ctrl + U</code> (подчеркивание).
+            </li>
+            <li>
+              <strong>Скопируйте HTML-код:</strong> Нажмите кнопку <strong>«Копировать код»</strong> (наверху или в углу листа). Вы получите чистый, семантический HTML-код.
+            </li>
+            <li>
+              <strong>Вставьте в OpenCart:</strong> В админке магазина перейдите в <em>Каталог → Статьи</em>, добавьте/откройте статью, переключите Summernote в режим исходного кода (иконка <code>&lt;/&gt;</code> или «Код») и вставьте буфер.
+            </li>
+          </ol>
+        </section>
+
+        <section class="help-section help-integration">
+          <h3><i class="fa-solid fa-link"></i> Взаимодействие с «Конструктором статей»</h3>
+          <p>
+            Этот инструмент является частью экосистемы модулей для OpenCart и тесно интегрирован с 
+            <a href="https://tom-opencart.github.io/opencart-content-constructor/" target="_blank">Конструктором статей (Content Constructor)</a>:
+          </p>
+          <ul>
+            <li>
+              <strong>Синхронизация домена:</strong> Домен вашего сайта (из поля «Сайт») сохраняется в общем хранилище <code>localStorage</code> и автоматически синхронизируется между конструкторами.
+            </li>
+            <li>
+              <strong>Связывание страниц:</strong> После того как вы скопировали код документа и создали статью в админке OpenCart (например, с ID 3, ссылка: <code>index.php?route=information/information&amp;information_id=3</code>), вы можете использовать эту ссылку в Конструкторе статей.
+            </li>
+            <li>
+              <strong>Размещение в формах:</strong> Вставляйте полученные ссылки на соглашения в футер сайта, в формы подписки на рассылку или формы обратной связи, созданные в Конструкторе статей, чтобы полностью соблюсти законы 152-ФЗ и 38-ФЗ.
+            </li>
+          </ul>
+        </section>
+
+        <section class="help-section help-warning">
+          <h3><i class="fa-solid fa-triangle-exclamation"></i> Важное примечание о стилях</h3>
+          <p>
+            Экспортируемый HTML-код намеренно очищен от инлайн-стилей, классов и лишних тегов <code>&lt;div&gt;</code>. Это сделано для того, чтобы тексты автоматически наследовали шрифты, отступы и стили Bootstrap 3 вашей активной темы OpenCart 3 и выглядели гармонично без ручной настройки.
+          </p>
+        </section>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="helpCloseBtn">Закрыть</button>
       </div>
     </div>
   </div>
 
   <!-- Donate Modal -->
-  <div class="modal" id="donateModal">
-    <div class="modal__overlay"></div>
-    <div class="modal__content modal__content--small">
-      <div class="modal__header">
-        <h2 class="modal__title">Поддержать проект</h2>
-        <button class="modal__close" id="donateClose">✕</button>
+  <div class="modal-overlay" id="donateModal">
+    <div class="modal-window" style="width: 450px;">
+      <div class="modal-header">
+        <h2>Поддержать проект</h2>
+        <button class="modal-close" id="donateClose">✕</button>
       </div>
-      <div class="modal__body">
-        <p class="donate__text">Если конструктор сэкономил ваше время — можете отблагодарить автора:</p>
-        <div class="donate__details">
-          <div class="donate__item">
-            <span class="donate__label">ЮMoney:</span>
-            <code class="donate__value">4100112176183832</code>
+      <div class="modal-body">
+        <div class="donate-intro">
+          <div class="donate-icon-wrapper">
+            <i class="fa-solid fa-heart donate-heart-pulse"></i>
           </div>
-          <div class="donate__item">
-            <span class="donate__label">Карта:</span>
-            <code class="donate__value">5599 0021 3241 5086</code>
+          <div class="donate-text">
+            Если конструктор сэкономил ваше время и помог запустить магазин быстрее — вы можете отблагодарить автора. Спасибо за поддержку!
           </div>
-          <div class="donate__item">
-            <span class="donate__label">PayPal:</span>
-            <code class="donate__value">tomopencart@gmail.com</code>
+        </div>
+        
+        <div class="payment-methods">
+          <!-- ЮMoney -->
+          <div class="payment-card">
+            <div class="payment-card-icon card-color-yoomoney">
+              <i class="fa-solid fa-ruble-sign"></i>
+            </div>
+            <div class="payment-card-details">
+              <div class="payment-label">ЮMoney (Яндекс.Деньги)</div>
+              <div class="payment-value-container">
+                <span class="payment-value">4100112176183832</span>
+                <button class="btn-copy-payment" data-value="4100112176183832" title="Скопировать"><i class="fa-clone"></i></button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- PayPal -->
+          <div class="payment-card">
+            <div class="payment-card-icon card-color-paypal">
+              <i class="fa-brands fa-paypal"></i>
+            </div>
+            <div class="payment-card-details">
+              <div class="payment-label">PayPal</div>
+              <div class="payment-value-container">
+                <span class="payment-value">tomopencart@gmail.com</span>
+                <button class="btn-copy-payment" data-value="tomopencart@gmail.com" title="Скопировать"><i class="fa-clone"></i></button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="modal__footer">
-        <button class="btn btn--ghost" id="donateCloseBtn">Закрыть</button>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="donateCloseBtn">Закрыть</button>
       </div>
     </div>
   </div>
