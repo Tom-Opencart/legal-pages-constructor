@@ -12,8 +12,10 @@ const Editor = {
     loadDocument(docId) {
         const doc = Documents.get(docId);
         this.currentDoc = docId;
-        const saved = Storage.getDocument(docId);
+        let saved = Storage.getDocument(docId);
         if (saved) {
+            // Migrate old h3 section headers to p+strong
+            saved = saved.replace(/<h3>/g, '<p><strong>').replace(/<\/h3>/g, '</strong></p>');
             this.element.innerHTML = saved;
         } else {
             const settings = Storage.getSettings();
@@ -25,13 +27,14 @@ const Editor = {
         }
     },
 
+
     textToHtml(text) {
         if (!text) return '';
         return text.split(/\n\n+/).map(paragraph => {
             const trimmed = paragraph.trim();
             const formatted = trimmed.replace(/\n/g, '<br>\n');
             if (/^\d+\./.test(trimmed)) {
-                return '<h3>' + formatted + '</h3>';
+                return '<p><strong>' + formatted + '</strong></p>';
             }
             return '<p>' + formatted + '</p>';
         }).join('\n');
