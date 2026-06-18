@@ -276,20 +276,35 @@
         </div>
         
         <div class="payment-methods">
-          <!-- ЮMoney -->
+          <!-- ЮMoney (карта) -->
           <div class="payment-card">
             <div class="payment-card-icon card-color-yoomoney">
               <i class="fa-solid fa-ruble-sign"></i>
             </div>
             <div class="payment-card-details">
-              <div class="payment-label">ЮMoney (Яндекс.Деньги)</div>
+              <div class="payment-label">ЮMoney карта</div>
+              <div class="payment-value-container">
+                <span class="payment-value">5599 0021 3241 5086</span>
+                <button class="btn-copy-payment" data-value="5599 0021 3241 5086" title="Скопировать"><i class="fa fa-clone"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ЮMoney (кошелёк) -->
+          <div class="payment-card">
+            <div class="payment-card-icon card-color-yoomoney">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div class="payment-card-details">
+              <div class="payment-label">ЮMoney кошелёк</div>
               <div class="payment-value-container">
                 <span class="payment-value">4100112176183832</span>
                 <button class="btn-copy-payment" data-value="4100112176183832" title="Скопировать"><i class="fa fa-clone"></i></button>
               </div>
+              <a class="donate-yoomoney-link" href="https://yoomoney.ru/to/4100112176183832" target="_blank">Перейти к переводу на ЮMoney</a>
             </div>
           </div>
-          
+
           <!-- PayPal -->
           <div class="payment-card">
             <div class="payment-card-icon card-color-paypal">
@@ -303,6 +318,10 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="donate-copy-hint">
+          Нажмите на кнопку копирования рядом с реквизитами для сохранения в буфер обмена.
         </div>
       </div>
       <div class="modal-footer">

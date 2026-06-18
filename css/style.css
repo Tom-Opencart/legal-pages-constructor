@@ -1020,6 +1020,27 @@ body.preview-hidden .panel-right {
     color: #22543d;
 }
 
+.donate-yoomoney-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s;
+}
+.donate-yoomoney-link:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+.donate-copy-hint {
+    margin-top: 14px;
+    font-size: 12px;
+    color: #718096;
+    text-align: center;
+}
+
 /* ============================================================
    Mobile & Tablet Responsive Styles
    ============================================================ */
