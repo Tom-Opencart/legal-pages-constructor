@@ -1206,9 +1206,13 @@ body.preview-hidden .panel-right {
         width: 36px;
         height: 36px;
         font-size: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
     .header-right .btn::before {
         font-size: 15px;
+        line-height: 1;
     }
     /* Help button: show only "?" */
     #helpBtn::before {
