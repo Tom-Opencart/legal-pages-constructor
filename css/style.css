@@ -1221,12 +1221,9 @@ body.preview-hidden .panel-right {
         content: "⚙️";
         font-size: 16px;
     }
-    /* Copy button: show clipboard icon */
-    #copyBtn::before {
-        content: "\f24a";
-        font-family: "Font Awesome 6 Free";
-        font-weight: 900;
-        font-size: 15px;
+    /* Hide copy button — editor sheet has its own */
+    #copyBtn {
+        display: none;
     }
 
     /* Hide desktop sidebar */
