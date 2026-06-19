@@ -1180,7 +1180,7 @@ body.preview-hidden .panel-right {
     }
     .header-left {
         border-right: none;
-        padding-left: 0;
+        padding-left: 14px;
     }
     .header-title {
         font-size: 13px;
@@ -1200,6 +1200,7 @@ body.preview-hidden .panel-right {
     /* Header buttons: icon-only */
     .header-right {
         gap: 4px;
+        padding-right: 14px;
     }
     .header-right .btn {
         padding: 0;
