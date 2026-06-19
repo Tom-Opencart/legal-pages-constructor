@@ -1206,6 +1206,7 @@ body.preview-hidden .panel-right {
         width: 36px;
         height: 36px;
         font-size: 0;
+        gap: 0;
         display: inline-flex;
         align-items: center;
         justify-content: center;
