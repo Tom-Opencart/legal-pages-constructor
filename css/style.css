@@ -1199,8 +1199,7 @@ body.preview-hidden .panel-right {
 
     /* Header buttons: icon-only */
     .header-right {
-        gap: 4px;
-        padding-right: 14px;
+        padding-right: 5px;
     }
     .header-right .btn {
         padding: 0;
