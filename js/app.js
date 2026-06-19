@@ -172,12 +172,37 @@ const App = {
 
         // Clone sidebar buttons into mobile overlay
         const desktopButtons = document.getElementById('docTabs');
+        const desktopDonate = document.querySelector('.panel-support');
         if (desktopButtons) {
             sidebarContent.innerHTML = desktopButtons.innerHTML;
             // Remove duplicate IDs from cloned elements
             sidebarContent.querySelectorAll('[id]').forEach(el => {
                 el.removeAttribute('id');
             });
+            // Hide "Заполнить реквизиты" — settings accessible via header gear icon
+            const settingsBtn = sidebarContent.querySelector('.block-btn:first-child');
+            if (settingsBtn) {
+                settingsBtn.style.display = 'none';
+            }
+            // Hide group titles for cleaner look
+            sidebarContent.querySelectorAll('.palette-group-title').forEach(el => {
+                el.style.display = 'none';
+            });
+            // Add donate button at the bottom
+            if (desktopDonate) {
+                const donateClone = desktopDonate.querySelector('.donate-btn');
+                if (donateClone) {
+                    const donateBtn = donateClone.cloneNode(true);
+                    donateBtn.removeAttribute('id');
+                    donateBtn.style.marginTop = 'auto';
+                    donateBtn.style.flexShrink = '0';
+                    sidebarContent.appendChild(donateBtn);
+                    donateBtn.addEventListener('click', () => {
+                        this.closeMobileSidebar();
+                        UI.modal.show('donateModal');
+                    });
+                }
+            }
             // Rebind click events for mobile buttons
             sidebarContent.querySelectorAll('.block-btn[data-doc]').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -186,28 +211,11 @@ const App = {
                     this.closeMobileSidebar();
                 });
             });
-            // Rebind settings button
-            const mobileSettingsBtn = sidebarContent.querySelector('.block-btn:first-child');
-            if (mobileSettingsBtn) {
-                mobileSettingsBtn.addEventListener('click', () => {
-                    this.closeMobileSidebar();
-                    UI.modal.show('settingsModal');
-                    this.populateSettingsForm();
-                });
-            }
             // Rebind nav button
             const mobileNavBtn = sidebarContent.querySelector('.block-btn--nav');
             if (mobileNavBtn) {
                 mobileNavBtn.addEventListener('click', () => {
                     window.open('https://tom-opencart.github.io/opencart-content-constructor/', '_blank');
-                });
-            }
-            // Rebind donate button
-            const mobileDonateBtn = sidebarContent.querySelector('.donate-btn');
-            if (mobileDonateBtn) {
-                mobileDonateBtn.addEventListener('click', () => {
-                    this.closeMobileSidebar();
-                    UI.modal.show('donateModal');
                 });
             }
         }

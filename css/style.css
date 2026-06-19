@@ -1235,6 +1235,28 @@ body.preview-hidden .panel-right {
         display: none;
     }
 
+    /* Mobile sidebar donate button */
+    .mobile-sidebar-content .donate-btn {
+        background: #fff5f5 !important;
+        border-color: #feb2b2 !important;
+        color: #c53030 !important;
+        margin-top: auto;
+        flex-shrink: 0;
+    }
+    .mobile-sidebar-content .donate-btn .block-btn-icon {
+        background: #fed7d7 !important;
+        color: #e53e3e !important;
+    }
+    .mobile-sidebar-content .donate-btn:hover {
+        background: #fff0f0 !important;
+        border-color: #fc8181 !important;
+        color: #9b2c2c !important;
+    }
+    .mobile-sidebar-content .donate-btn:hover .block-btn-icon {
+        background: #e53e3e !important;
+        color: #fff !important;
+    }
+
     /* Main layout */
     .main {
         height: calc(100vh - 53px);
