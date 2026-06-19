@@ -19,6 +19,9 @@ const App = {
      * Bind all event handlers
      */
     bindEvents() {
+        // Mobile hamburger menu
+        this.initMobileSidebar();
+
         // Header Input Syncing (Instant update)
         const headerFullName = document.getElementById('headerFullName');
         if (headerFullName) {
@@ -153,6 +156,103 @@ const App = {
                 });
             });
         });
+    },
+
+    /**
+     * Initialize mobile sidebar overlay
+     */
+    initMobileSidebar() {
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const overlay = document.getElementById('mobileSidebarOverlay');
+        const sidebar = document.getElementById('mobileSidebar');
+        const sidebarContent = document.getElementById('mobileSidebarContent');
+        const sidebarClose = document.getElementById('mobileSidebarClose');
+
+        if (!hamburgerBtn || !overlay || !sidebar || !sidebarContent) return;
+
+        // Clone sidebar buttons into mobile overlay
+        const desktopButtons = document.getElementById('docTabs');
+        if (desktopButtons) {
+            sidebarContent.innerHTML = desktopButtons.innerHTML;
+            // Remove duplicate IDs from cloned elements
+            sidebarContent.querySelectorAll('[id]').forEach(el => {
+                el.removeAttribute('id');
+            });
+            // Rebind click events for mobile buttons
+            sidebarContent.querySelectorAll('.block-btn[data-doc]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const docId = btn.getAttribute('data-doc');
+                    Editor.loadDocument(docId);
+                    this.closeMobileSidebar();
+                });
+            });
+            // Rebind settings button
+            const mobileSettingsBtn = sidebarContent.querySelector('.block-btn:first-child');
+            if (mobileSettingsBtn) {
+                mobileSettingsBtn.addEventListener('click', () => {
+                    this.closeMobileSidebar();
+                    UI.modal.show('settingsModal');
+                    this.populateSettingsForm();
+                });
+            }
+            // Rebind nav button
+            const mobileNavBtn = sidebarContent.querySelector('.block-btn--nav');
+            if (mobileNavBtn) {
+                mobileNavBtn.addEventListener('click', () => {
+                    window.open('https://tom-opencart.github.io/opencart-content-constructor/', '_blank');
+                });
+            }
+            // Rebind donate button
+            const mobileDonateBtn = sidebarContent.querySelector('.donate-btn');
+            if (mobileDonateBtn) {
+                mobileDonateBtn.addEventListener('click', () => {
+                    this.closeMobileSidebar();
+                    UI.modal.show('donateModal');
+                });
+            }
+        }
+
+        // Open sidebar
+        hamburgerBtn.addEventListener('click', () => {
+            this.openMobileSidebar();
+        });
+
+        // Close sidebar
+        if (sidebarClose) {
+            sidebarClose.addEventListener('click', () => {
+                this.closeMobileSidebar();
+            });
+        }
+
+        // Close on overlay click
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                this.closeMobileSidebar();
+            }
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                this.closeMobileSidebar();
+            }
+        });
+    },
+
+    openMobileSidebar() {
+        const overlay = document.getElementById('mobileSidebarOverlay');
+        if (overlay) {
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    },
+
+    closeMobileSidebar() {
+        const overlay = document.getElementById('mobileSidebarOverlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     },
 
     /**

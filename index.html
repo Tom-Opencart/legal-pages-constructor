@@ -13,6 +13,9 @@
   <div id="app">
     <header class="header">
       <div class="header-left">
+        <button class="btn-icon-mobile" id="hamburgerBtn" title="Меню">
+          <i class="fa-solid fa-bars"></i>
+        </button>
         <div class="header-brand">
           <div class="header-title">Документы по 152-ФЗ, 38-ФЗ и ГК РФ</div>
           <div class="header-meta">
@@ -105,6 +108,19 @@
           <div class="editor__content" id="editor" contenteditable="true"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div class="mobile-sidebar-overlay" id="mobileSidebarOverlay">
+    <div class="mobile-sidebar" id="mobileSidebar">
+      <div class="mobile-sidebar-header">
+        <span class="mobile-sidebar-title">Документы</span>
+        <button class="mobile-sidebar-close" id="mobileSidebarClose">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="mobile-sidebar-content" id="mobileSidebarContent"></div>
     </div>
   </div>
 
