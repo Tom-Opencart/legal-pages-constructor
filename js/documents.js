@@ -524,7 +524,7 @@ Email: {{email}}`
             actual_address: 'Фактический адрес',
             phone: 'Телефон',
             email: 'E-mail для контактов',
-            email_consent: 'E-mail для отзывов ПДн',
+            email_consent: 'E-mail для отзывов персональных данных',
             bank_name: 'Наименование банка',
             bik: 'БИК банка',
             corr_account: 'Корреспондентский счёт',
