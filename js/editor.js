@@ -72,6 +72,10 @@ const Editor = {
         if (UI.tabs) {
             UI.tabs.currentTab = docId;
         }
+
+        if (typeof App !== 'undefined' && typeof App.updateSeoPreview === 'function') {
+            App.updateSeoPreview();
+        }
     },
 
     textToHtml(text) {

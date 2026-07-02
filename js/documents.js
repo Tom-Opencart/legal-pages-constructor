@@ -3,7 +3,12 @@ const Documents = {
         offer: {
             id: 'offer',
             title: 'Публичная оферта',
-            slug: 'public-offer',
+            slug: 'publichnaya-oferta',
+            seo: {
+                metaTitle: 'Публичная оферта для интернет-магазина{{site_suffix}}',
+                metaH1: 'Публичная оферта',
+                metaDescription: 'Публичная оферта для интернет-магазина{{site_for_sentence}}: условия заказа, оплаты, доставки, возврата товаров и оформления покупки на сайте.'
+            },
             template: `ПУБЛИЧНАЯ ОФЕРТА
 о заключении договора купли-продажи товаров
 
@@ -108,7 +113,12 @@ Email: {{email}}
         policy: {
             id: 'policy',
             title: 'Политика обработки персональных данных',
-            slug: 'privacy-policy',
+            slug: 'politika-obrabotki-personalnykh-dannykh',
+            seo: {
+                metaTitle: 'Политика обработки персональных данных{{site_suffix}}',
+                metaH1: 'Политика обработки персональных данных',
+                metaDescription: 'Политика обработки персональных данных{{site_for_sentence}}: порядок сбора, хранения, использования и защиты персональных данных пользователей сайта.'
+            },
             template: `ПОЛИТИКА ОБРАБОТКИ ПЕРСОНАЛЬНЫХ ДАННЫХ
 {{owner_type}} {{full_name}}
 
@@ -242,7 +252,12 @@ Email: {{email}}`
         consent: {
             id: 'consent',
             title: 'Согласие на обработку персональных данных',
-            slug: 'personal-data-consent',
+            slug: 'soglasie-na-obrabotku-personalnykh-dannykh',
+            seo: {
+                metaTitle: 'Согласие на обработку персональных данных{{site_suffix}}',
+                metaH1: 'Согласие на обработку персональных данных',
+                metaDescription: 'Согласие на обработку персональных данных{{site_for_sentence}} для размещения на сайте и в формах заказа, регистрации, обратной связи и подписки.'
+            },
             template: `СОГЛАСИЕ
 на обработку персональных данных
 
@@ -311,7 +326,12 @@ Email: {{email}}`
         agreement: {
             id: 'agreement',
             title: 'Пользовательское соглашение',
-            slug: 'user-agreement',
+            slug: 'polzovatelskoe-soglashenie',
+            seo: {
+                metaTitle: 'Пользовательское соглашение{{site_suffix}}',
+                metaH1: 'Пользовательское соглашение',
+                metaDescription: 'Пользовательское соглашение{{site_for_sentence}}: правила использования сайта, права и обязанности пользователя и администрации.'
+            },
             template: `ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ
 
 Настоящее Пользовательское соглашение регулирует отношения между {{owner_type}} {{full_name}} (далее — «Администрация») и пользователем сайта {{site_name}} (далее — «Пользователь»).
@@ -358,7 +378,12 @@ Email: {{email}}`
         newsletter: {
             id: 'newsletter',
             title: 'Согласие на получение рассылки',
-            slug: 'newsletter-consent',
+            slug: 'soglasie-na-poluchenie-rassylki',
+            seo: {
+                metaTitle: 'Согласие на получение рассылки{{site_suffix}}',
+                metaH1: 'Согласие на получение рассылки',
+                metaDescription: 'Согласие на получение рекламных и информационных рассылок{{site_for_sentence}} для размещения в формах подписки и соблюдения требований 38-ФЗ.'
+            },
             template: `СОГЛАСИЕ
 на получение рекламных и информационных рассылок
 
@@ -389,7 +414,12 @@ Email: {{email}}`
         cookie: {
             id: 'cookie',
             title: 'О технологии куки (Cookie)',
-            slug: 'cookie-policy',
+            slug: 'o-tekhnologii-kuki-cookie',
+            seo: {
+                metaTitle: 'Политика использования Cookie{{site_suffix}}',
+                metaH1: 'О технологии куки (Cookie)',
+                metaDescription: 'Политика использования Cookie{{site_for_sentence}}: какие cookie применяются на сайте, зачем они нужны и как пользователь может управлять ими.'
+            },
             template: `ПОЛИТИКА ИСПОЛЬЗОВАНИЯ ФАЙЛОВ COOKIE
 {{site_name}}
 
@@ -488,6 +518,79 @@ Email: {{email}}`
             title: doc.title,
             slug: doc.slug
         }));
+    },
+
+    getSeoData(docId, settings = {}) {
+        const doc = this.get(docId);
+        if (!doc) return null;
+
+        const siteName = this.getCleanSiteName(settings.site_name);
+        const seo = doc.seo || {};
+        const replacements = {
+            ...settings,
+            site_name: siteName,
+            site_suffix: siteName ? ` | ${siteName}` : '',
+            site_for_sentence: siteName ? ` сайта ${siteName}` : ' сайта',
+            article_title: doc.title
+        };
+
+        return {
+            articleTitle: this.cleanText(doc.title),
+            metaTitle: this.cleanText(this.renderSeoTemplate(seo.metaTitle || '{{article_title}}{{site_suffix}}', replacements)),
+            metaH1: this.cleanText(this.renderSeoTemplate(seo.metaH1 || doc.title, replacements)),
+            metaDescription: this.cleanText(this.renderSeoTemplate(seo.metaDescription || doc.title, replacements)),
+            seoUrl: this.cleanText(doc.slug || this.slugify(doc.title))
+        };
+    },
+
+    renderSeoTemplate(template, replacements) {
+        return String(template || '').replace(/\{\{(.*?)\}\}/g, (match, expression) => {
+            const key = expression.trim();
+            return replacements[key] !== undefined && replacements[key] !== null
+                ? replacements[key]
+                : '';
+        });
+    },
+
+    getCleanSiteName(siteName) {
+        const value = this.cleanText(siteName);
+        if (!value) return '';
+
+        return value
+            .replace(/^https?:\/\//i, '')
+            .replace(/^www\./i, '')
+            .replace(/\/+$/g, '');
+    },
+
+    cleanText(value) {
+        return String(value || '')
+            .replace(/\s+/g, ' ')
+            .replace(/\s+([,.;:!?])/g, '$1')
+            .trim();
+    },
+
+    slugify(value) {
+        const transliterationMap = {
+            а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i',
+            й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't',
+            у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y',
+            ь: '', э: 'e', ю: 'yu', я: 'ya'
+        };
+
+        return this.cleanText(value)
+            .toLowerCase()
+            .split('')
+            .map(char => {
+                if (transliterationMap[char] !== undefined) {
+                    return transliterationMap[char];
+                }
+
+                return /[a-z0-9]/.test(char) ? char : ' ';
+            })
+            .join('')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
     },
     
     render(docId, settings) {

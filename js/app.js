@@ -104,10 +104,24 @@ const App = {
             });
         }
 
+        const seoDataBtn = document.getElementById('seoDataBtn');
+        if (seoDataBtn) {
+            seoDataBtn.addEventListener('click', () => {
+                this.openSeoModal();
+            });
+        }
+
         const sheetCopyBtn = document.getElementById('sheetCopyBtn');
         if (sheetCopyBtn) {
             sheetCopyBtn.addEventListener('click', () => {
                 this.copyHtml();
+            });
+        }
+
+        const sheetSeoBtn = document.getElementById('sheetSeoBtn');
+        if (sheetSeoBtn) {
+            sheetSeoBtn.addEventListener('click', () => {
+                this.openSeoModal();
             });
         }
 
@@ -133,6 +147,20 @@ const App = {
             });
         }
 
+        const seoClose = document.getElementById('seoClose');
+        if (seoClose) {
+            seoClose.addEventListener('click', () => {
+                UI.modal.hide('seoModal');
+            });
+        }
+
+        const seoCloseBtn = document.getElementById('seoCloseBtn');
+        if (seoCloseBtn) {
+            seoCloseBtn.addEventListener('click', () => {
+                UI.modal.hide('seoModal');
+            });
+        }
+
         // Navigation button to Content Constructor
         const btnNavArticle = document.getElementById('btnNavArticle');
         if (btnNavArticle) {
@@ -142,7 +170,7 @@ const App = {
         }
 
         // Clipboard Copy buttons in Donate Modal
-        document.querySelectorAll('.btn-copy-payment').forEach(btn => {
+        document.querySelectorAll('.btn-copy-payment[data-value]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const value = btn.getAttribute('data-value');
                 navigator.clipboard.writeText(value).then(() => {
@@ -154,6 +182,13 @@ const App = {
                         btn.innerHTML = '<i class="fa fa-clone"></i>';
                     }, 2000);
                 });
+            });
+        });
+
+        document.querySelectorAll('.btn-copy-seo').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-copy-target');
+                this.copySeoField(targetId, btn);
             });
         });
     },
@@ -346,6 +381,76 @@ const App = {
         if (typeof Editor !== 'undefined' && Editor.element) {
             Editor.updateSettingsInEditor(settings);
         }
+
+        this.updateSeoPreview();
+    },
+
+    getCurrentSeoData() {
+        return Documents.getSeoData(Editor.currentDoc || 'offer', Storage.getSettings());
+    },
+
+    updateSeoPreview() {
+        const seoData = this.getCurrentSeoData();
+        if (!seoData) return;
+
+        const fieldMap = {
+            seoArticleTitle: seoData.articleTitle,
+            seoMetaTitle: seoData.metaTitle,
+            seoMetaH1: seoData.metaH1,
+            seoMetaDescription: seoData.metaDescription,
+            seoUrl: seoData.seoUrl
+        };
+
+        Object.entries(fieldMap).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = value;
+            }
+        });
+    },
+
+    openSeoModal() {
+        this.updateSeoPreview();
+        UI.modal.show('seoModal');
+    },
+
+    async copyText(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch {
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                return true;
+            } catch {
+                return false;
+            }
+        }
+    },
+
+    async copySeoField(targetId, button) {
+        const target = document.getElementById(targetId);
+        if (!target) {
+            UI.toast.show('Поле для копирования не найдено');
+            return;
+        }
+
+        const success = await this.copyText(target.value || '');
+
+        if (!success) {
+            UI.toast.show('Ошибка копирования SEO-данных');
+            return;
+        }
+
+        UI.toast.show('Значение скопировано');
+        this.showSeoCopyFeedback(button);
     },
 
     /**
@@ -353,25 +458,13 @@ const App = {
      */
     async copyHtml() {
         const html = Editor.getRenderedHtml();
-        try {
-            await navigator.clipboard.writeText(html);
+        const success = await this.copyText(html);
+
+        if (success) {
             UI.toast.show('HTML-код успешно скопирован');
             this.showCopyFeedback();
-        } catch {
-            try {
-                const textarea = document.createElement('textarea');
-                textarea.value = html;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                UI.toast.show('HTML-код успешно скопирован');
-                this.showCopyFeedback();
-            } catch {
-                UI.toast.show('Ошибка копирования кода');
-            }
+        } else {
+            UI.toast.show('Ошибка копирования кода');
         }
     },
 
@@ -399,6 +492,18 @@ const App = {
                 sheetCopyBtn.innerHTML = '<i class="fa fa-clone"></i>';
             }, 2000);
         }
+    },
+
+    showSeoCopyFeedback(button) {
+        if (!button) return;
+
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fa fa-check"></i>';
+
+        setTimeout(() => {
+            button.classList.remove('copied');
+            button.innerHTML = '<i class="fa fa-clone"></i>';
+        }, 2000);
     }
 };
 

@@ -39,6 +39,10 @@
       <div class="header-right">
         <button class="btn btn-ghost" id="helpBtn" title="Справка">? Справка</button>
         <button class="btn btn-secondary btn-icon" id="settingsBtn" title="Настройки">⚙️</button>
+        <button class="btn btn-secondary" id="seoDataBtn" title="SEO и мета-данные">
+          <i class="fa-solid fa-tags"></i>
+          <span>SEO</span>
+        </button>
         <button class="btn btn-success" id="copyBtn">Копировать код</button>
       </div>
     </header>
@@ -96,9 +100,14 @@
 
       <div class="workspace">
         <div class="editor-sheet">
-          <button class="editor-sheet-copy-btn" id="sheetCopyBtn" title="Копировать HTML-код">
-            <i class="fa fa-clone"></i>
-          </button>
+          <div class="editor-sheet-actions">
+            <button class="editor-sheet-action-btn" id="sheetSeoBtn" title="SEO и мета-данные">
+              <i class="fa-solid fa-tags"></i>
+            </button>
+            <button class="editor-sheet-action-btn" id="sheetCopyBtn" title="Копировать HTML-код">
+              <i class="fa fa-clone"></i>
+            </button>
+          </div>
           <div class="editor-sheet-header">
             <h2 class="editor__title" id="editorTitle">Публичная оферта</h2>
           </div>
@@ -270,6 +279,74 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" id="helpCloseBtn">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO Modal -->
+  <div class="modal-overlay" id="seoModal">
+    <div class="modal-window" style="width: 720px; max-width: 94vw;">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-tags"></i> SEO и мета-данные статьи</h2>
+        <button class="modal-close" id="seoClose">✕</button>
+      </div>
+      <div class="modal-body seo-modal-body">
+        <div class="seo-modal-intro">
+          SEO-поля собираются по матрице документа и данным магазина. Для типовых юридических страниц SEO URL берётся из зафиксированной ЧПУ-матрицы с дефисами.
+        </div>
+
+        <div class="seo-field-card">
+          <div class="seo-field-head">
+            <label for="seoArticleTitle">Название статьи</label>
+            <button class="btn-copy-payment btn-copy-seo" data-copy-target="seoArticleTitle" title="Скопировать название">
+              <i class="fa fa-clone"></i>
+            </button>
+          </div>
+          <input type="text" id="seoArticleTitle" class="seo-field-input" readonly>
+        </div>
+
+        <div class="seo-field-card">
+          <div class="seo-field-head">
+            <label for="seoMetaTitle">Meta Title</label>
+            <button class="btn-copy-payment btn-copy-seo" data-copy-target="seoMetaTitle" title="Скопировать meta title">
+              <i class="fa fa-clone"></i>
+            </button>
+          </div>
+          <textarea id="seoMetaTitle" class="seo-field-textarea" rows="2" readonly></textarea>
+        </div>
+
+        <div class="seo-field-card">
+          <div class="seo-field-head">
+            <label for="seoMetaH1">Meta H1</label>
+            <button class="btn-copy-payment btn-copy-seo" data-copy-target="seoMetaH1" title="Скопировать meta h1">
+              <i class="fa fa-clone"></i>
+            </button>
+          </div>
+          <input type="text" id="seoMetaH1" class="seo-field-input" readonly>
+        </div>
+
+        <div class="seo-field-card">
+          <div class="seo-field-head">
+            <label for="seoMetaDescription">Meta Description</label>
+            <button class="btn-copy-payment btn-copy-seo" data-copy-target="seoMetaDescription" title="Скопировать meta description">
+              <i class="fa fa-clone"></i>
+            </button>
+          </div>
+          <textarea id="seoMetaDescription" class="seo-field-textarea seo-field-textarea--lg" rows="4" readonly></textarea>
+        </div>
+
+        <div class="seo-field-card">
+          <div class="seo-field-head">
+            <label for="seoUrl">SEO URL</label>
+            <button class="btn-copy-payment btn-copy-seo" data-copy-target="seoUrl" title="Скопировать SEO URL">
+              <i class="fa fa-clone"></i>
+            </button>
+          </div>
+          <input type="text" id="seoUrl" class="seo-field-input seo-field-input--mono" readonly>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="seoCloseBtn">Закрыть</button>
       </div>
     </div>
   </div>
