@@ -436,7 +436,8 @@ html, body {
     margin-right: -42px;
     margin-top: -48px;
     display: flex;
-    gap: 6px;
+    flex-direction: column;
+    gap: 8px;
     z-index: 100;
 }
 
