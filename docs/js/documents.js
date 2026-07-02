@@ -5,7 +5,7 @@ const Documents = {
             title: 'Публичная оферта',
             slug: 'publichnaya-oferta',
             seo: {
-                metaTitle: 'Публичная оферта для интернет-магазина{{site_suffix}}',
+                metaTitle: 'Публичная оферта{{site_store_reference_title}}',
                 metaH1: 'Публичная оферта',
                 metaDescription: 'Публичная оферта{{site_store_reference}}: условия заказа, оплаты, доставки, возврата товаров и оформления покупки на сайте.'
             },
@@ -115,7 +115,7 @@ Email: {{email}}
             title: 'Политика обработки персональных данных',
             slug: 'politika-obrabotki-personalnykh-dannykh',
             seo: {
-                metaTitle: 'Политика обработки персональных данных{{site_suffix}}',
+                metaTitle: 'Политика обработки персональных данных{{site_reference_title}}',
                 metaH1: 'Политика обработки персональных данных',
                 metaDescription: 'Политика обработки персональных данных{{site_reference}}: порядок сбора, хранения, использования и защиты персональных данных пользователей сайта.'
             },
@@ -254,7 +254,7 @@ Email: {{email}}`
             title: 'Согласие на обработку персональных данных',
             slug: 'soglasie-na-obrabotku-personalnykh-dannykh',
             seo: {
-                metaTitle: 'Согласие на обработку персональных данных{{site_suffix}}',
+                metaTitle: 'Согласие на обработку персональных данных{{site_reference_title}}',
                 metaH1: 'Согласие на обработку персональных данных',
                 metaDescription: 'Согласие на обработку персональных данных{{site_reference}} для размещения на сайте и в формах заказа, регистрации, обратной связи и подписки.'
             },
@@ -328,7 +328,7 @@ Email: {{email}}`
             title: 'Пользовательское соглашение',
             slug: 'polzovatelskoe-soglashenie',
             seo: {
-                metaTitle: 'Пользовательское соглашение{{site_suffix}}',
+                metaTitle: 'Пользовательское соглашение{{site_reference_title}}',
                 metaH1: 'Пользовательское соглашение',
                 metaDescription: 'Пользовательское соглашение{{site_reference}}: правила использования сайта, права и обязанности пользователя и администрации.'
             },
@@ -380,7 +380,7 @@ Email: {{email}}`
             title: 'Согласие на получение рассылки',
             slug: 'soglasie-na-poluchenie-rassylki',
             seo: {
-                metaTitle: 'Согласие на получение рассылки{{site_suffix}}',
+                metaTitle: 'Согласие на получение рассылки{{site_reference_title}}',
                 metaH1: 'Согласие на получение рассылки',
                 metaDescription: 'Согласие на получение рекламных и информационных рассылок{{site_reference}} для размещения в формах подписки и соблюдения требований 38-ФЗ.'
             },
@@ -416,7 +416,7 @@ Email: {{email}}`
             title: 'О технологии куки (Cookie)',
             slug: 'o-tekhnologii-kuki-cookie',
             seo: {
-                metaTitle: 'Политика использования Cookie{{site_suffix}}',
+                metaTitle: 'Политика использования Cookie{{site_reference_title}}',
                 metaH1: 'О технологии куки (Cookie)',
                 metaDescription: 'Политика использования Cookie{{site_reference}}: какие cookie применяются на сайте, зачем они нужны и как пользователь может управлять ими.'
             },
@@ -531,7 +531,9 @@ Email: {{email}}`
             site_name: siteName,
             site_suffix: siteName ? ` | ${siteName}` : '',
             site_reference: siteName ? ` сайта ${siteName}` : ' сайта',
+            site_reference_title: siteName ? ` сайта ${siteName}` : '',
             site_store_reference: siteName ? ` интернет-магазина ${siteName}` : ' интернет-магазина',
+            site_store_reference_title: siteName ? ` интернет-магазина ${siteName}` : ' для интернет-магазина',
             site_for_sentence: siteName ? ` сайта ${siteName}` : ' сайта',
             article_title: doc.title
         };

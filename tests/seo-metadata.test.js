@@ -41,8 +41,8 @@ assert.equal(
 );
 assert.match(
 	offerSeo.metaTitle,
-	/Публичная оферта.*myshop\.ru/,
-	'meta title should contain article title and site'
+	/Публичная оферта интернет-магазина myshop\.ru/i,
+	'meta title should naturally include the user site name'
 );
 assert.match(
 	offerSeo.metaDescription,
