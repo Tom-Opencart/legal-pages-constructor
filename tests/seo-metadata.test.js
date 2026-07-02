@@ -46,8 +46,8 @@ assert.match(
 );
 assert.match(
 	offerSeo.metaDescription,
-	/интернет-магазина/i,
-	'meta description should describe the page purpose'
+	/myshop\.ru/i,
+	'meta description should include the user site name'
 );
 
 assert.equal(
